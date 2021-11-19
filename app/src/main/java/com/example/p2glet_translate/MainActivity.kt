@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
+import android.widget.AdapterView
 import androidx.databinding.DataBindingUtil
 import com.example.p2glet_translate.databinding.ActivityMainBinding
 import com.google.firebase.ml.naturallanguage.FirebaseNaturalLanguage
@@ -22,8 +24,6 @@ class MainActivity : AppCompatActivity() {
         option = FirebaseTranslatorOptions.Builder()
             .setSourceLanguage(FirebaseTranslateLanguage.EN)
             .setTargetLanguage(FirebaseTranslateLanguage.KO)
-        translater = FirebaseNaturalLanguage.getInstance().getTranslator(option!!.build())
-        translater?.downloadModelIfNeeded()
 
         binding.inputText.addTextChangedListener(object : TextWatcher{
             override fun afterTextChanged(p0: Editable?) {
@@ -33,12 +33,41 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                TODO("Not yet implemented")
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                TODO("Not yet implemented")
             }
         })
+        binding.fromSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                if(p2 == 0){
+                    // 영어
+                    option?.setSourceLanguage(FirebaseTranslateLanguage.EN)
+                }else if (p2 == 1){
+                    // 한국어
+                    option?.setSourceLanguage(FirebaseTranslateLanguage.KO)
+                }
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+        }
+        binding.toSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                if(p2 == 0){
+                    // 영어
+                    option?.setTargetLanguage(FirebaseTranslateLanguage.EN)
+                }else if (p2 == 1){
+                    // 한국어
+                    option?.setTargetLanguage(FirebaseTranslateLanguage.KO)
+                }
+                translater = FirebaseNaturalLanguage.getInstance().getTranslator(option!!.build())
+                translater?.downloadModelIfNeeded()
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+
+        }
     }
 }
